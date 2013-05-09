@@ -1,9 +1,10 @@
 pip>=0.8.2
 South
-Django=>1.4
+Django>=1.4
+django-extensions
 
 # install these if you intend to develop
 #mox
-#nose
-#django-nose
-#fabric
+nose
+django-nose
+fabric
