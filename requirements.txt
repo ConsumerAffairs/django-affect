@@ -1,0 +1,9 @@
+pip>=0.8.2
+South
+Django=>1.4
+
+# install these if you intend to develop
+#mox
+#nose
+#django-nose
+#fabric
