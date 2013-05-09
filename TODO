@@ -1,0 +1,40 @@
+## Criteria selection ##
+### Detect & set flag ###
+1. ✓Add model to store flag
+    * ✓Name - slug
+    * ✓Active - bool
+    * ✓Priority - int
+    * ✓Conflicts - m2m to self
+2. Add model to store criteria
+    * ✓Name - slug
+    * ✓Persistent - bool
+    * ✓Flags - m2m to flag
+    * ✓Everyone - choice (unknown, yes, no)
+    * ✓Testing - bool
+    * ✓Users - m2m to users
+    * ✓Groups - m2m to groups
+    * ✓Percent - float (0.0-99.9)
+    * ✓Superusers - bool
+    * ✓Staff - bool
+    * ✓Authenticated - bool
+    * ✓Referrer - text (comma seperated)
+    * ✓Entry url - text (comma seperated)
+    * ✓Device - choice (mobile, tablet, desktop)
+    * ✓Query Args - json field
+    * ✓Notes - text
+    * ✓Languages? - text (comma seperated)
+    * ✓Max Cookie age? - int (seconds)
+    * ✗Actions taken? - ?
+3. Add middleware to detect
+    * Looks at incoming requests
+    * Caches flag if not cached
+    * Finds criteria matches, first in conflict priority wins
+    * Add flag to request
+    * Add cookie to indicate flags if persistant
+4. Check for flag from view and/or template
+5. Goal tracking
+    * Persona Custom variable
+    * Event log
+    * GA social share
+
+# vim: set ft=mkd :
