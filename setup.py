@@ -25,7 +25,8 @@ setup(name='django-affect',
           'affect', 'affect.migrations'],
       install_requires=[
           'South',
-          'Django>=1.5',],
+          'Django>=1.4',
+          'django-extensions'],
       classifiers=[
           'Development Status :: 4 - Beta',
           'Environment :: Web Environment',
