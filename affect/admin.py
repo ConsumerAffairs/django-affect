@@ -14,7 +14,7 @@ class CriteriaAdmin(admin.ModelAdmin):
                        'staff', 'authenticated', 'users', 'groups')}),
         ('Browsing', {
             'classes': ('collapse',),
-            'fields': ('device_type', 'entry_url', 'referrer',
+            'fields': ('entry_url', 'referrer', #'device_type', 
                        'query_args',)}),
         ('Details', {
             'classes': ('collapse',),
