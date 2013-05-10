@@ -7,6 +7,17 @@ from django.db import models
 from django_extensions.db.fields.json import JSONField
 
 
+def suite():
+    """Django test discovery."""
+    import nose
+    import os
+    import unittest
+    path = os.path.join(os.path.dirname(__file__), 'tests')
+    suite = unittest.TestSuite()
+    suite.addTests(nose.loader.TestLoader().loadTestsFromDir(path))
+    return suite
+
+
 class Flag(models.Model):
     name = models.SlugField(
         unique=True,
@@ -82,9 +93,10 @@ class Criteria(models.Model):
     users = models.ManyToManyField(User, blank=True, help_text=(
         'Activate this criteria for these users.'))
     max_cookie_age = models.IntegerField(
-        default=0, blank=True, null=True,
+        default=2592000, blank=True, null=True,
         help_text='If this criteria is persistant, this is the amount of time '
-        'in days before the cookie should expire. 0 never expires.')
+        'in seconds before the cookie should expire. 0 or blank expires at end'
+        ' of browser session.')
     note = models.TextField(blank=True, help_text=(
         'Note where this criteria is used.'))
     created = models.DateTimeField(
@@ -102,4 +114,4 @@ class Criteria(models.Model):
 
     def save(self, *args, **kwargs):
         self.modified = datetime.now()
-        super(Flag, self).save(*args, **kwargs)
+        super(Criteria, self).save(*args, **kwargs)
