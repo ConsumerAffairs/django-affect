@@ -29,3 +29,6 @@ INSTALLED_APPS = (
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = ('--nocapture', )
+SOUTH_TESTS_MIGRATE = False
+CACHES = dict(
+    default=dict(BACKEND='django.core.cache.backends.dummy.DummyCache'))
