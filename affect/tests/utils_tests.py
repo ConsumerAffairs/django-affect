@@ -7,7 +7,7 @@ import mox
 from affect import utils
 from affect.models import Criteria, Flag
 from affect.utils import (cache_criteria, meets_criteria, random,
-                          set_persist_criteria, uncache_criteria)
+                          set_persist_criteria, uncache_criteria, uncache_flag)
 
 
 class CacheCriteriaTest(TestCase):
@@ -382,5 +382,20 @@ class UncacheCriteriaTest(TestCase):
 
         mock.ReplayAll()
         uncache_criteria(instance=criteria)
+        mock.VerifyAll()
+        mock.UnsetStubs()
+
+
+class UncacheFlagTest(TestCase):
+    def test_uncache(self):
+        flag = Flag.objects.create(name='test_flag')
+        conflict = Flag.objects.create(name='nega-test_flag')
+        flag.conflicts.add(conflict)
+        mock = mox.Mox()
+        mock.StubOutWithMock(cache, 'set')
+        cache.set('flag_conflicts:test_flag', None, 5)
+
+        mock.ReplayAll()
+        uncache_flag(instance=flag)
         mock.VerifyAll()
         mock.UnsetStubs()

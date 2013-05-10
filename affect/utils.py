@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db.models.signals import post_save, post_delete, m2m_changed
 
-from .models import Criteria
+from .models import Criteria, Flag
 
 
 settings.AFFECTED_COOKIE = getattr(settings, 'AFFECTED_COOKIE', 'dac_%s')
@@ -144,3 +144,13 @@ m2m_changed.connect(uncache_criteria, sender=Criteria.users.through,
                     dispatch_uid='m2m_criteria_users')
 m2m_changed.connect(uncache_criteria, sender=Criteria.groups.through,
                     dispatch_uid='m2m_criteria_groups')
+
+
+def uncache_flag(**kwargs):
+    flag = kwargs.get('instance')
+    cache.set(FLAG_CONFLICTS_KEY % flag.name, None, 5)
+
+post_save.connect(uncache_flag, sender=Flag, dispatch_uid='save_flag')
+post_delete.connect(uncache_flag, sender=Flag, dispatch_uid='delete_flag')
+m2m_changed.connect(uncache_flag, sender=Flag.conflicts.through,
+                    dispatch_uid='m2m_flag_conflicts')
