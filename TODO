@@ -5,7 +5,7 @@
     * ✓Active - bool
     * ✓Priority - int
     * ✓Conflicts - m2m to self
-2. Add model to store criteria
+2. ✓Add model to store criteria
     * ✓Name - slug
     * ✓Persistent - bool
     * ✓Flags - m2m to flag
@@ -26,9 +26,9 @@
     * ✓Max Cookie age? - int (seconds)
     * ✗Actions taken? - ?
 3. Add middleware to detect
-    * Looks at incoming requests
+    * ✓Looks at incoming requests
     * Caches flag if not cached
-    * Finds criteria matches, first in conflict priority wins
+    * ✓Finds criteria matches, first in conflict priority wins
     * Add flag to request
     * Add cookie to indicate flags if persistant
 4. Check for flag from view and/or template
