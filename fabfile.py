@@ -9,7 +9,6 @@ import os
 
 from fabric.api import local as _local
 
-
 NAME = os.path.basename(os.path.dirname(__file__))
 ROOT = os.path.abspath(os.path.dirname(__file__))
 APP_NAME = 'affect'
@@ -25,9 +24,9 @@ def shell():
     _local('django-admin.py shell')
 
 
-def test():
+def test(test_case=''):
     """Run the test suite."""
-    _local('django-admin.py test')
+    _local('django-admin.py test %s' % test_case)
 
 
 def serve():
@@ -40,12 +39,15 @@ def syncdb():
     _local('django-admin.py syncdb')
 
 
-def schema():
+def schema(initial=False):
     """Create a schema migration for any changes."""
-    _local('django-admin.py schemamigration %s --auto' % APP_NAME)
+    if initial:
+        _local('django-admin.py schemamigration %s --initial' % APP_NAME)
+    else:
+        _local('django-admin.py schemamigration %s --auto' % APP_NAME)
 
 
-def migrate():
+def migrate(migration=''):
     """Update a testing database with south."""
-    _local('django-admin.py migrate')
+    _local('django-admin.py migrate %s %s' % (APP_NAME, migration))
 
