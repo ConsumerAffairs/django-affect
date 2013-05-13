@@ -122,7 +122,7 @@ class FlagAffectedTest(TestCase):
 
     def test_affected_flags_missing(self):
         request = RequestFactory().get('')
-        self.assertIs(flag_affected(request, 'test_flag'), False)
+        self.assertIs(flag_is_affected(request, 'test_flag'), False)
 
 
 class MeetsCriteriaTest(TestCase):

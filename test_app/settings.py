@@ -45,7 +45,7 @@ CACHES = dict(
 import sys
 if 'jenkins' in sys.argv:
     INSTALLED_APPS += ('django_jenkins',)
-    PROJECT_APPS = ('urlographer',)
+    PROJECT_APPS = ('affect',)
     COVERAGE_RCFILE = 'test_app/coveragerc'
     JENKINS_TASKS = (
         'django_jenkins.tasks.with_coverage',
