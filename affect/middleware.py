@@ -50,13 +50,15 @@ class AffectMiddleware(object):
     def process_response(self, request, response):
         secure = getattr(settings, 'AFFECTED_SECURE_COOKIE', False)
 
-        for criteria, active in request.affected_persist.items():
-            name = smart_str(settings.AFFECTED_COOKIE % criteria.name)
-            if criteria.max_cookie_age:
-                age = criteria.max_cookie_age
-            else:
-                age = None
-            response.set_cookie(name, value=active, max_age=age, secure=secure)
+        if hasattr(request, 'affected_persist'):
+            for criteria, active in request.affected_persist.items():
+                name = smart_str(settings.AFFECTED_COOKIE % criteria.name)
+                if criteria.max_cookie_age:
+                    age = criteria.max_cookie_age
+                else:
+                    age = None
+                response.set_cookie(
+                    name, value=active, max_age=age, secure=secure)
 
         if hasattr(request, 'affected_tests'):
             for criteria, active in request.affected_tests.items():
