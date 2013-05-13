@@ -9,6 +9,10 @@ Install from [github](https://github.com/ConsumerAffairs/django-affect) with pip
 
     pip install -e git@github.com:ConsumerAffairs/django-affect.git#django-affect
 
+Or from PyPI:
+
+    pip install django-affect
+
 Add to installed apps and middleware
 
     INSTALLED_APPS = (
