@@ -25,12 +25,14 @@
     * ✓Languages? - text (comma seperated)
     * ✓Max Cookie age? - int (seconds)
     * ✗Actions taken? - ?
-3. Add middleware to detect
+3. ✓Add middleware to detect
     * ✓Looks at incoming requests
-    * Caches flag if not cached
+    * ✓Caches flag if not cached
     * ✓Finds criteria matches, first in conflict priority wins
-    * Add flag to request
-    * Add cookie to indicate flags if persistant
+    * ✓Add flag to request
+    * ✓Add cookie to indicate flags if persistant
+    * ✓Add testing of middleware
+    * ✓Add Device Detection
 4. Check for flag from view and/or template
 5. Goal tracking
     * Persona Custom variable
