@@ -12,8 +12,8 @@ from .models import Criteria, Flag
 settings.AFFECTED_COOKIE = getattr(settings, 'AFFECTED_COOKIE', 'dac_%s')
 settings.AFFECTED_TESTING_COOKIE = getattr(
     settings, 'AFFECTED_TESTING_COOKIE', 'dact_%s')
-settings.AFFECTED_NONENETRY_DOMAINS = getattr(
-    settings, 'AFFECTED_NONENETRY_DOMAINS', [])
+settings.AFFECTED_NONENTRY_DOMAINS = getattr(
+    settings, 'AFFECTED_NONENTRY_DOMAINS', [])
 ALL_CRITERIA_KEY = 'criteria:all'
 CRITERIA_KEY = 'criteria:%s'
 CRITERIA_FLAGS_KEY = 'criteria:%s:flags'
@@ -74,7 +74,7 @@ def meets_criteria(request, criteria_name):
 
     if criteria.entry_url:
         if (referrer != request.META.get('HTTP_HOST', '') and
-                not referrer in settings.AFFECTED_NONENETRY_DOMAINS):
+                not referrer in settings.AFFECTED_NONENTRY_DOMAINS):
             urls = criteria.entry_url.split(',')
             if request.path in urls:
                 return True
@@ -144,11 +144,16 @@ m2m_changed.connect(uncache_criteria, sender=Criteria.users.through,
                     dispatch_uid='m2m_criteria_users')
 m2m_changed.connect(uncache_criteria, sender=Criteria.groups.through,
                     dispatch_uid='m2m_criteria_groups')
+m2m_changed.connect(uncache_criteria, sender=Criteria.flags.through,
+                    dispatch_uid='m2m_criteria_flags')
 
 
 def uncache_flag(**kwargs):
     flag = kwargs.get('instance')
     cache.set(FLAG_CONFLICTS_KEY % flag.name, None, 5)
+
+    for criteria in flag.criteria_set.all():
+        uncache_criteria(instance=criteria)
 
 post_save.connect(uncache_flag, sender=Flag, dispatch_uid='save_flag')
 post_delete.connect(uncache_flag, sender=Flag, dispatch_uid='delete_flag')

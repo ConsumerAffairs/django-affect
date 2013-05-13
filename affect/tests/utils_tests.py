@@ -290,7 +290,7 @@ class MeetsCriteriaTest(TestCase):
             meets_criteria(self.request, 'test_crit'), True)
 
     def test_entry_url_nonentry_domain(self):
-        with self.settings(AFFECTED_NONENETRY_DOMAINS=['example.com']):
+        with self.settings(AFFECTED_NONENTRY_DOMAINS=['example.com']):
             self.crit.entry_url = '/test.html'
             self.crit.save()
             self.request.path = '/test.html'
@@ -388,12 +388,16 @@ class UncacheCriteriaTest(TestCase):
 
 class UncacheFlagTest(TestCase):
     def test_uncache(self):
+        criteria = Criteria.objects.create(name='test_crit')
         flag = Flag.objects.create(name='test_flag')
         conflict = Flag.objects.create(name='nega-test_flag')
         flag.conflicts.add(conflict)
+        criteria.flags.add(flag, conflict)
         mock = mox.Mox()
         mock.StubOutWithMock(cache, 'set')
         cache.set('flag_conflicts:test_flag', None, 5)
+        mock.StubOutWithMock(utils, 'uncache_criteria')
+        utils.uncache_criteria(instance=criteria)
 
         mock.ReplayAll()
         uncache_flag(instance=flag)
