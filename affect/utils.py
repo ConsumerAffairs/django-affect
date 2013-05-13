@@ -22,11 +22,23 @@ CRITERIA_GROUPS_KEY = 'criteria:%s:groups'
 FLAG_CONFLICTS_KEY = 'flag_conflicts:%s'
 
 
-def set_persist_criteria(request, criteria_name, active=True):
-    """Set a criteria value on a request object."""
-    if not hasattr(request, 'affect_persist'):
-        request.affect_persist = {}
-    request.affect_persist[criteria_name] = active
+def detect_device(request):
+    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
+    if user_agent:
+        if (
+                'ipod' in user_agent or
+                'iphone' in user_agent or
+                'ipad' in user_agent or
+                'android' in user_agent or
+                'webos' in user_agent or
+                'windows phone' in user_agent):
+            return Criteria.MOBILE_DEVICE
+        elif (
+                'opera mini' in user_agent or
+                'application/vnd.wap.xhtml+xml' in request.META.get(
+                    'HTTP_ACCEPT', '')):
+            return Criteria.SIMPLE_DEVICE
+    return Criteria.DESKTOP_DEVICE
 
 
 def meets_criteria(request, criteria_name):
@@ -88,6 +100,9 @@ def meets_criteria(request, criteria_name):
                 if v == req_arg or v == '*':
                     return True
 
+    if criteria.device_type and criteria.device_type == detect_device(request):
+        return True
+
     criteria_users = cache.get(CRITERIA_USERS_KEY % criteria_name)
     if criteria_users is None:
         criteria_users = criteria.users.all()
@@ -115,6 +130,13 @@ def meets_criteria(request, criteria_name):
             return True
         set_persist_criteria(request, criteria_name, False)
     return False
+
+
+def set_persist_criteria(request, criteria_name, active=True):
+    """Set a criteria value on a request object."""
+    if not hasattr(request, 'affect_persist'):
+        request.affect_persist = {}
+    request.affect_persist[criteria_name] = active
 
 
 def cache_criteria(**kwargs):

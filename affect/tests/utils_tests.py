@@ -6,8 +6,9 @@ import mox
 
 from affect import utils
 from affect.models import Criteria, Flag
-from affect.utils import (cache_criteria, meets_criteria, random,
-                          set_persist_criteria, uncache_criteria, uncache_flag)
+from affect.utils import (
+    cache_criteria, detect_device, meets_criteria, random,
+    set_persist_criteria, uncache_criteria, uncache_flag)
 
 
 class CacheCriteriaTest(TestCase):
@@ -39,6 +40,77 @@ class CacheCriteriaTest(TestCase):
         self.mock.ReplayAll()
         cache_criteria(instance=self.crit, action='pre_add')
         self.mock.VerifyAll()
+
+
+class DetectDeviceTest(TestCase):
+    def setUp(self):
+        self.request = RequestFactory().get('')
+
+    def test_iphone_mobile(self):
+        self.request.META['HTTP_USER_AGENT'] = (
+            'UCWEB/8.8 (iPhone; CPU OS_6; en-US)AppleWebKit/534.1 U3/3.0.0 '
+            'Mobile')
+        self.assertEqual(detect_device(self.request), Criteria.MOBILE_DEVICE)
+
+    def test_ipad_mobile(self):
+        self.request.META['HTTP_USER_AGENT'] = (
+            'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 '
+            '(KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25')
+        self.assertEqual(detect_device(self.request), Criteria.MOBILE_DEVICE)
+
+    def test_ipod_mobile(self):
+        self.request.META['HTTP_USER_AGENT'] = (
+            'Mozilla/5.0 (iPod; U; CPU iPhone OS 3_1_1 like Mac OS X; en-us) '
+            'AppleWebKit/528.18 (KHTML, like Gecko) Mobile/7C145')
+        self.assertEqual(detect_device(self.request), Criteria.MOBILE_DEVICE)
+
+    def test_android_mobile(self):
+        self.request.META['HTTP_USER_AGENT'] = (
+            'Mozilla/5.0 (Linux; Android 4.2.2; Galaxy Nexus Build/JDQ39) '
+            'AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.58 Mobile'
+            ' Safari/537.31')
+        self.assertEqual(detect_device(self.request), Criteria.MOBILE_DEVICE)
+
+    def test_android_tablet(self):
+        self.request.META['HTTP_USER_AGENT'] = (
+            'Mozilla/5.0 (Linux; Android 4.2.2; Nexus 7 Build/JDQ39) '
+            'AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.58 '
+            'Safari/537.31')
+        self.assertEqual(detect_device(self.request), Criteria.MOBILE_DEVICE)
+
+    def test_no_user_agent(self):
+        self.assertEqual(detect_device(self.request), Criteria.DESKTOP_DEVICE)
+
+    def test_desktop(self):
+        self.request.META['HTTP_USER_AGENT'] = (
+            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:20.0) Gecko/20100101 '
+            'Firefox/20.0')
+        self.assertEqual(detect_device(self.request), Criteria.DESKTOP_DEVICE)
+
+    def test_webos_mobile(self):
+        self.request.META['HTTP_USER_AGENT'] = (
+            'Mozilla/5.0 (webOS/1.3; U; en-US) AppleWebKit/525.27.1 (KHTML, '
+            'like Gecko) Version/1.0 Safari/525.27.1 Desktop/1.0')
+        self.assertEqual(detect_device(self.request), Criteria.MOBILE_DEVICE)
+
+    def test_windows_phone(self):
+        self.request.META['HTTP_USER_AGENT'] = (
+            'Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/'
+            '5.0; IEMobile/9.0)')
+        self.assertEqual(detect_device(self.request), Criteria.MOBILE_DEVICE)
+
+    def test_opera_mini(self):
+        self.request.META['HTTP_USER_AGENT'] = (
+            'Opera/10.61 (J2ME/MIDP; Opera Mini/5.1.21219/19.999; en-US; '
+            'rv:1.9.3a5) WebKit/534.5 Presto/2.6.30')
+        self.assertEqual(detect_device(self.request), Criteria.SIMPLE_DEVICE)
+
+    def test_wap_device(self):
+        self.request.META['HTTP_USER_AGENT'] = (
+            'Nokia6630/1.0 (2.3.129) SymbianOS/8.0 Series60/2.6 '
+            'Profile/MIDP-2.0 Configuration/CLDC-1.1')
+        self.request.META['HTTP_ACCEPT'] = 'application/vnd.wap.xhtml+xml'
+        self.assertEqual(detect_device(self.request), Criteria.SIMPLE_DEVICE)
 
 
 class MeetsCriteriaTest(TestCase):
@@ -352,6 +424,18 @@ class MeetsCriteriaTest(TestCase):
 
         self.assertIs(
             meets_criteria(request, 'test_crit'), False)
+
+    def test_device_type_active(self):
+        self.crit.device_type = Criteria.MOBILE_DEVICE
+        self.crit.save()
+
+        self.mock.StubOutWithMock(utils, 'detect_device')
+        utils.detect_device(self.request).AndReturn(Criteria.MOBILE_DEVICE)
+
+        self.mock.ReplayAll()
+        self.assertIs(
+            meets_criteria(self.request, 'test_crit'), True)
+        self.mock.VerifyAll()
 
 
 class SetPersistCriteriaTest(TestCase):

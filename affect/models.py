@@ -72,8 +72,20 @@ class Criteria(models.Model):
         'Activate this criteria for staff?'))
     authenticated = models.BooleanField(default=False, help_text=(
         'Activate this criteria for authenticate users?'))
-    DEVICE_CHOICES = ((0, 'Any'), (1, 'Desktop'), (2, 'Mobile'), (3, 'Tablet'))
-    device_type = models.IntegerField(choices=DEVICE_CHOICES, default=0)
+    UNKNOWN_DEVICE = 0
+    DESKTOP_DEVICE = 1
+    MOBILE_DEVICE = 2
+    # TABLET_DEVICE = 3
+    SIMPLE_DEVICE = 4
+    DEVICE_CHOICES = ((UNKNOWN_DEVICE, 'Unknown'), (DESKTOP_DEVICE, 'Desktop'),
+                      (MOBILE_DEVICE, 'Mobile'),  # (TABLET_DEVICE, 'Tablet'),
+                      (SIMPLE_DEVICE, 'Dumb Phone'))
+    device_type = models.IntegerField(
+        choices=DEVICE_CHOICES, default=0, help_text=(
+            'Activate this criteria for users using certain classes of '
+            'device. (NOTICE: This is only an attempt as device detection is '
+            'hard and generally a bad idea. If you\'re doing something '
+            'client-side, use css and js feature detection instead)'))
     entry_url = models.TextField(blank=True, default='', help_text=(
         'Activate this criteria for users who enter on one of these urls '
         '(comma separated list)'))
