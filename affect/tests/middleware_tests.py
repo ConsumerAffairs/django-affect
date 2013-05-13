@@ -76,7 +76,6 @@ class AffectMiddlewareRequestTest(TestCase):
         self.assertDictEqual(self.request.affected_persist, {})
         self.assertListEqual(self.request.affected_flags, [])
 
-
     def test_persistent_wo_cookie(self):
         self.criteria.persistent = True
         self.criteria.save()
@@ -160,7 +159,6 @@ class AffectMiddlewareResponseTest(TestCase):
 
         self.assertEqual(resp.content, 'test response')
 
-
     def test_persist_cookie_with_max_age(self):
         self.criteria.max_cookie_age = 1200
         self.request.affected_persist[self.criteria] = False
@@ -198,4 +196,3 @@ class AffectMiddlewareResponseTest(TestCase):
         self.mock.VerifyAll()
 
         self.assertEqual(resp.content, 'test response')
-
