@@ -7,7 +7,7 @@ import mox
 from affect import utils
 from affect.models import Criteria, Flag
 from affect.utils import (
-    cache_criteria, detect_device, meets_criteria, random,
+    cache_criteria, detect_device, flag_is_affected, meets_criteria, random,
     set_persist_criteria, uncache_criteria, uncache_flag)
 
 
@@ -111,6 +111,18 @@ class DetectDeviceTest(TestCase):
             'Profile/MIDP-2.0 Configuration/CLDC-1.1')
         self.request.META['HTTP_ACCEPT'] = 'application/vnd.wap.xhtml+xml'
         self.assertEqual(detect_device(self.request), Criteria.SIMPLE_DEVICE)
+
+
+class FlagAffectedTest(TestCase):
+    def test_active(self):
+        request = RequestFactory().get('')
+        request.affected_flags = ['test_flag']
+        self.assertIs(flag_is_affected(request, 'test_flag'), True)
+        self.assertIs(flag_is_affected(request, 'other_flag'), False)
+
+    def test_affected_flags_missing(self):
+        request = RequestFactory().get('')
+        self.assertIs(flag_affected(request, 'test_flag'), False)
 
 
 class MeetsCriteriaTest(TestCase):

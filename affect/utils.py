@@ -41,6 +41,12 @@ def detect_device(request):
     return Criteria.DESKTOP_DEVICE
 
 
+def flag_is_affected(request, flag_name):
+    if hasattr(request, 'affected_flags'):
+        return flag_name in request.affected_flags
+    return False
+
+
 def meets_criteria(request, criteria_name):
     criteria = cache.get(CRITERIA_KEY % criteria_name)
     if criteria is None:
