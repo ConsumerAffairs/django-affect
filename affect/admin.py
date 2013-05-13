@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import Criteria, Flag
 
+
 class CriteriaAdmin(admin.ModelAdmin):
     model = Criteria
     readonly_fields = ('created', 'modified',)
