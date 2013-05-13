@@ -28,6 +28,9 @@ def test(test_case=''):
     """Run the test suite."""
     _local('django-admin.py test %s' % test_case)
 
+def jenkins_test():
+    """Run the test suite with Django Jenkins, cover, pep8 and pyflakes."""
+    _local('django-admin.py jenkins')
 
 def serve():
     """Start the Django dev server."""
