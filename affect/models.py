@@ -57,15 +57,20 @@ class Criteria(models.Model):
         default=False,
         help_text='This criteria is persistant to the user, and a cookie will '
         'be set. Set off to evaluate criteria for user on each request.')
+    max_cookie_age = models.IntegerField(
+        default=2592000, blank=True, null=True,
+        help_text='If this criteria is persistant, this is the amount of time '
+        'in seconds before the cookie should expire. 0 or blank expires at end'
+        ' of browser session.')
     everyone = models.NullBooleanField(blank=True, help_text=(
         'Turn criteria on (True) or off (False) for all users. Overrides ALL '
         'other criteria.'))
+    testing = models.BooleanField(default=False, help_text=(
+        'Allow this criteria to be set for a session for user testing.'))
     percent = models.DecimalField(
         max_digits=3, decimal_places=1, null=True, blank=True,
         help_text=('A number between 0.0 and 99.9 to indicate a percentage of '
                    'users for whom flags will be active.'))
-    testing = models.BooleanField(default=False, help_text=(
-        'Allow this criteria to be set for a session for user testing.'))
     superusers = models.BooleanField(default=True, help_text=(
         'Activate this criteria for superusers?'))
     staff = models.BooleanField(default=False, help_text=(
@@ -104,11 +109,6 @@ class Criteria(models.Model):
         'Activate this criteria for these user groups.'))
     users = models.ManyToManyField(User, blank=True, help_text=(
         'Activate this criteria for these users.'))
-    max_cookie_age = models.IntegerField(
-        default=2592000, blank=True, null=True,
-        help_text='If this criteria is persistant, this is the amount of time '
-        'in seconds before the cookie should expire. 0 or blank expires at end'
-        ' of browser session.')
     note = models.TextField(blank=True, help_text=(
         'Note where this criteria is used.'))
     created = models.DateTimeField(
