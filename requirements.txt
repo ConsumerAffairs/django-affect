@@ -4,7 +4,7 @@ Django>=1.4
 django-extensions
 
 # install these if you intend to develop
-#mox
+mox
 nose
 django-nose
 fabric
