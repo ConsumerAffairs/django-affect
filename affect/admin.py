@@ -5,6 +5,7 @@ from .models import Criteria, Flag
 
 class CriteriaAdmin(admin.ModelAdmin):
     model = Criteria
+    raw_id_fields = ('users', 'groups')
     readonly_fields = ('created', 'modified',)
     list_display = ('name', 'note', 'flag_names', 'persistent', 'everyone',
                     'testing', 'percent', 'superusers', 'staff',
