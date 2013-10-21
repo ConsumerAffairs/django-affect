@@ -41,15 +41,3 @@ NOSE_ARGS = ('--nocapture', )
 SOUTH_TESTS_MIGRATE = False
 CACHES = dict(
     default=dict(BACKEND='django.core.cache.backends.dummy.DummyCache'))
-
-import sys
-if 'jenkins' in sys.argv:
-    INSTALLED_APPS += ('django_jenkins',)
-    PROJECT_APPS = ('affect',)
-    COVERAGE_RCFILE = 'test_app/coveragerc'
-    JENKINS_TASKS = (
-        'django_jenkins.tasks.with_coverage',
-        'django_jenkins.tasks.django_tests',
-        'django_jenkins.tasks.run_pep8',
-        'django_jenkins.tasks.run_pyflakes',
-    )

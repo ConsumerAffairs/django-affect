@@ -7,17 +7,6 @@ from django.db import models
 from django_extensions.db.fields.json import JSONField
 
 
-def suite():
-    """Django test discovery."""
-    import nose
-    import os
-    import unittest
-    path = os.path.join(os.path.dirname(__file__), 'tests')
-    suite = unittest.TestSuite()
-    suite.addTests(nose.loader.TestLoader().loadTestsFromDir(path))
-    return suite
-
-
 class Flag(models.Model):
     name = models.SlugField(
         unique=True,
