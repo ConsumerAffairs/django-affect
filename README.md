@@ -3,6 +3,8 @@ Django Affect
 
 Affect is a flagging engine which applies a flag value to requests based on defined criteria. While largely inspired by [django-waffle](https://github.com/jsocol/django-waffle), Affect focuses less on feature and rollout flags and more on changing user experience on a more detailed and longer term basis.
 
+[![Build Status](https://travis-ci.org/ConsumerAffairs/django-affect.png?branch=master)](https://travis-ci.org/ConsumerAffairs/django-affect)
+
 Installing
 ----------
 Install from [github](https://github.com/ConsumerAffairs/django-affect) with pip:
