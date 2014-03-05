@@ -34,17 +34,19 @@ class AffectMiddlewareRequestTest(TestCase):
         middleware.meets_criteria(self.request, self.criteria).AndReturn(True)
         cache.get('criteria:test_crit:flags')
         middleware.cache_criteria(instance=self.criteria)
-        cache.get(u'flag_conflicts:test_flag')
-        cache.add(u'flag_conflicts:test_flag', mox.SameElementsAs([]))
-        cache.get(u'flag_conflicts:other_flag')
-        cache.add(u'flag_conflicts:other_flag', mox.SameElementsAs([]))
+        cache.get(u'flag_conflicts:test_flag').InAnyOrder()
+        cache.add(
+            u'flag_conflicts:test_flag', mox.SameElementsAs([])).InAnyOrder()
+        cache.get(u'flag_conflicts:other_flag').InAnyOrder()
+        cache.add(
+            u'flag_conflicts:other_flag', mox.SameElementsAs([])).InAnyOrder()
 
         self.mock.ReplayAll()
         self.mw.process_request(self.request)
         self.mock.VerifyAll()
 
         self.assertDictEqual(self.request.affected_persist, {})
-        self.assertListEqual(self.request.affected_flags,
+        self.assertItemsEqual(self.request.affected_flags,
                              [self.flag1.name, self.flag2.name])
 
     def test_criteria_active_everything_cached(self):
@@ -53,8 +55,10 @@ class AffectMiddlewareRequestTest(TestCase):
         middleware.meets_criteria(self.request, self.criteria).AndReturn(True)
         cache.get('criteria:test_crit:flags').AndReturn(
             self.criteria.flags.all())
-        cache.get(u'flag_conflicts:test_flag').AndReturn(Flag.objects.none())
-        cache.get(u'flag_conflicts:other_flag').AndReturn(Flag.objects.none())
+        cache.get(u'flag_conflicts:test_flag').InAnyOrder().AndReturn(
+            Flag.objects.none())
+        cache.get(u'flag_conflicts:other_flag').InAnyOrder().AndReturn(
+            Flag.objects.none())
 
         self.mock.ReplayAll()
         self.mw.process_request(self.request)
