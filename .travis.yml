@@ -1,10 +1,10 @@
 language: python
-python:
-    - "2.7"
+env:
+    - TOXENV=django14
+    - TOXENV=django15
+    - TOXENV=django16
+    - TOXENV=coverage
 install:
-    - pip install -r requirements.txt
-    - pip install coveralls
+    - pip install tox
 script:
-    - fab test
-    - fab test_coverage
-after_success: coveralls
+    - tox
