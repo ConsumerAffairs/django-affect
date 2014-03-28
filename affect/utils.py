@@ -72,6 +72,12 @@ def meets_criteria(request, criteria_name):
         if tc in request.COOKIES:
             return request.COOKIES[tc] == 'True'
 
+    if criteria.persistent:
+        criteria_cookie = request.COOKIES.get(
+            settings.AFFECTED_COOKIE % criteria.name, '')
+        if criteria_cookie:
+            return criteria_cookie == 'True'
+
     user = request.user
 
     if criteria.authenticated and user.is_authenticated():

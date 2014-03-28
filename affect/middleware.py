@@ -17,12 +17,7 @@ class AffectMiddleware(object):
             cache.add(ALL_CRITERIA_KEY, all_criteria)
 
         for criteria in all_criteria:
-            criteria_cookie = request.COOKIES.get(
-                settings.AFFECTED_COOKIE % criteria.name, '')
-            if criteria_cookie and criteria.persistent:
-                active = criteria_cookie == 'True'
-            else:
-                active = meets_criteria(request, criteria)
+            active = meets_criteria(request, criteria)
 
             if criteria.persistent:
                 request.affected_persist[criteria] = active

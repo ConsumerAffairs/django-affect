@@ -47,7 +47,7 @@ class AffectMiddlewareRequestTest(TestCase):
 
         self.assertDictEqual(self.request.affected_persist, {})
         self.assertItemsEqual(self.request.affected_flags,
-                             [self.flag1.name, self.flag2.name])
+                              [self.flag1.name, self.flag2.name])
 
     def test_criteria_active_everything_cached(self):
         self.mock.StubOutWithMock(middleware, 'cache_criteria')
@@ -66,7 +66,7 @@ class AffectMiddlewareRequestTest(TestCase):
 
         self.assertDictEqual(self.request.affected_persist, {})
         self.assertItemsEqual(self.request.affected_flags,
-                             [self.flag1.name, self.flag2.name])
+                              [self.flag1.name, self.flag2.name])
 
     def test_criteria_not_active(self):
         middleware.meets_criteria(self.request, self.criteria).AndReturn(False)
@@ -79,56 +79,6 @@ class AffectMiddlewareRequestTest(TestCase):
 
         self.assertDictEqual(self.request.affected_persist, {})
         self.assertListEqual(self.request.affected_flags, [])
-
-    def test_persistent_wo_cookie(self):
-        self.criteria.persistent = True
-        self.criteria.save()
-        middleware.meets_criteria(self.request, self.criteria).AndReturn(True)
-        cache.get('criteria:all')
-        cache.add('criteria:all', mox.IgnoreArg())
-        cache.get('criteria:test_crit:flags')
-        cache.add('criteria:test_crit', mox.IgnoreArg())
-        cache.add('criteria:test_crit:flags', mox.IgnoreArg())
-        cache.add('criteria:test_crit:users', mox.IgnoreArg())
-        cache.add('criteria:test_crit:groups', mox.IgnoreArg())
-        cache.get('flag_conflicts:other_flag').InAnyOrder()
-        cache.get('flag_conflicts:test_flag').InAnyOrder()
-        cache.add('flag_conflicts:test_flag', mox.IgnoreArg()).InAnyOrder()
-        cache.add('flag_conflicts:other_flag', mox.IgnoreArg()).InAnyOrder()
-
-        self.mock.ReplayAll()
-        self.mw.process_request(self.request)
-        self.mock.VerifyAll()
-
-        self.assertDictEqual(
-            self.request.affected_persist, {self.criteria: True})
-        self.assertItemsEqual(
-            self.request.affected_flags, [self.flag1.name, self.flag2.name])
-
-    def test_persistent_w_cookie(self):
-        self.request.COOKIES['dac_test_crit'] = 'True'
-        self.criteria.persistent = True
-        self.criteria.save()
-        cache.get('criteria:all')
-        cache.add('criteria:all', mox.IgnoreArg())
-        cache.get('criteria:test_crit:flags')
-        cache.add('criteria:test_crit', mox.IgnoreArg())
-        cache.add('criteria:test_crit:flags', mox.IgnoreArg())
-        cache.add('criteria:test_crit:users', mox.IgnoreArg())
-        cache.add('criteria:test_crit:groups', mox.IgnoreArg())
-        cache.get('flag_conflicts:other_flag').InAnyOrder()
-        cache.get('flag_conflicts:test_flag').InAnyOrder()
-        cache.add('flag_conflicts:test_flag', mox.IgnoreArg()).InAnyOrder()
-        cache.add('flag_conflicts:other_flag', mox.IgnoreArg()).InAnyOrder()
-
-        self.mock.ReplayAll()
-        self.mw.process_request(self.request)
-        self.mock.VerifyAll()
-
-        self.assertDictEqual(
-            self.request.affected_persist, {self.criteria: True})
-        self.assertItemsEqual(
-            self.request.affected_flags, [self.flag1.name, self.flag2.name])
 
     def test_flag_conflicts(self):
         middleware.meets_criteria(self.request, self.criteria).AndReturn(True)

@@ -215,6 +215,20 @@ class MeetsCriteriaTest(TestCase):
         self.assertIs(
             meets_criteria(self.request, 'test_crit'), False)
 
+    def test_persistent_cookie_on(self):
+        self.crit.persistent = True
+        self.crit.save()
+        self.request.COOKIES['dac_test_crit'] = 'True'
+
+        self.assertIs(meets_criteria(self.request, 'test_crit'), True)
+
+    def test_persistent_cookie_off(self):
+        self.crit.persistent = True
+        self.crit.save()
+        self.request.COOKIES['dac_test_crit'] = 'False'
+
+        self.assertIs(meets_criteria(self.request, 'test_crit'), False)
+
     def test_authenticated_user(self):
         self.crit.authenticated = True
         self.crit.save()
