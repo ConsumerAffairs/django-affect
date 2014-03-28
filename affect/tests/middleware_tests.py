@@ -80,6 +80,31 @@ class AffectMiddlewareRequestTest(TestCase):
         self.assertDictEqual(self.request.affected_persist, {})
         self.assertListEqual(self.request.affected_flags, [])
 
+    def test_persistent(self):
+        self.criteria.persistent = True
+        self.criteria.save()
+        middleware.meets_criteria(self.request, self.criteria).AndReturn(True)
+        cache.get('criteria:all')
+        cache.add('criteria:all', mox.IgnoreArg())
+        cache.get('criteria:test_crit:flags')
+        cache.add('criteria:test_crit', mox.IgnoreArg())
+        cache.add('criteria:test_crit:flags', mox.IgnoreArg())
+        cache.add('criteria:test_crit:users', mox.IgnoreArg())
+        cache.add('criteria:test_crit:groups', mox.IgnoreArg())
+        cache.get('flag_conflicts:other_flag').InAnyOrder()
+        cache.get('flag_conflicts:test_flag').InAnyOrder()
+        cache.add('flag_conflicts:test_flag', mox.IgnoreArg()).InAnyOrder()
+        cache.add('flag_conflicts:other_flag', mox.IgnoreArg()).InAnyOrder()
+
+        self.mock.ReplayAll()
+        self.mw.process_request(self.request)
+        self.mock.VerifyAll()
+
+        self.assertDictEqual(
+            self.request.affected_persist, {self.criteria: True})
+        self.assertItemsEqual(
+            self.request.affected_flags, [self.flag1.name, self.flag2.name])
+
     def test_flag_conflicts(self):
         middleware.meets_criteria(self.request, self.criteria).AndReturn(True)
         self.flag2.conflicts.add(self.flag1)
