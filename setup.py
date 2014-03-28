@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='django-affect',
-    version='1.0.0',
+    version='1.1.0',
     description='Request flagging engine inspired by django-waffle',
     author='Jeremy Sattefield',
     author_email='jsatterfield@consumeraffairs.com',

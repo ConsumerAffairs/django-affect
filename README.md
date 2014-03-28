@@ -8,6 +8,9 @@ Affect is a flagging engine which applies a flag value to requests based on defi
 
 Installing
 ----------
+
+Affect has been tested and working with Django 1.4, 1.5, and 1.6, and requires django-extensions.
+
 Install from [github](https://github.com/ConsumerAffairs/django-affect) with pip:
 
     pip install -e git@github.com:ConsumerAffairs/django-affect.git#django-affect
@@ -97,6 +100,17 @@ In Affect, Flags are the primary indicator of whether action should be taken by 
             template = 'app/new_template.html'
         else:
             template = 'app/old_template.html'
+
+####Use in Templates####
+
+If you are using RequestContext when passing context to your template, you can also check for the flag from within the template. This work for both Django
+and Jinja templates.
+
+    {% if 'rev_b' in request.affected_flags %}
+        <div class="new-style">
+    {% else %}
+        <div class="old-style">
+    {% endif %}
 
 ###Settings###
 
